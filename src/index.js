@@ -7,9 +7,9 @@ import App from './components/app/'; // по умолчанию ищет фай�
 
 
 ReactDOM.render(
-  <React.StrictMode>
+  <>
     <App />
-  </React.StrictMode>,
+  </>,
   document.getElementById('root')
 );
 

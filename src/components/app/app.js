@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import './app.css';
 // import style from './App.module.css';
@@ -14,28 +14,84 @@ const AppBlock = styled.div`
     margin: 0 auto;
     max-width: 800px;
 `
-const StyledAppBlock = styled(AppBlock)`
-    background-color: grey;
+// Пример наследования стилизации блока
+// const StyledAppBlock = styled(AppBlock)` 
+//     background-color: grey;
+// `
+
+const SearchFilterBlock = styled.div`
+    display: flex;
+    margin: 1rem 0;
+    .search-input {
+        width: auto;
+        flex-grow: 1;
+        margin-right: 3px;
+      }
 `
 
-const App = () => {
-    const data = [         
-        {label: 'Going to learn React', important: true, id: 'qwer'},
-        {label: 'That is so good', important: false, id: 'asdf'},
-        {label: 'I need a break...', important: false, id: 'zxcv'}
-    ];
+export default class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: [         
+                {label: 'Going to learn React', important: true, id: '1'},
+                {label: 'That is so good', important: false, id: '2'},
+                {label: 'I need a break...', important: false, id: '3'}
+            ]
+        };
+        this.deleteItem = this.deleteItem.bind(this);
+        this.addItem = this.addItem.bind(this);
 
-    return (
-        <StyledAppBlock>
-            <AppHeader/>
-            <div className='search-panel d-flex'>
-                <SearchPanel/>
-                <PostStatusFilter/>
-            </div>
-            <PostList posts={data} />
-            <PostAddForm/>
-        </StyledAppBlock>
-    )
+        this.maxId = 4;
+    }
+
+    deleteItem(id) {
+        this.setState(({data}) => {
+            const index = data.findIndex(elem => elem.id === id);     
+            //Так делать нельзя, нужно соблюдать иммутабельность state
+            // data.splice(index, 1);            
+            // return {
+            //     data: data
+            // }
+            const newArr = [...data];
+            newArr.splice(index, 1);
+            return {
+                data: newArr
+            }
+        });
+    }
+
+    addItem(body) {
+        const newItem = {
+            label: body,
+            important: false,
+            id: this.maxId++
+        }
+        this.setState(({data}) => {
+            const newArr = [...data, newItem];
+            return {
+                data: newArr
+            }            
+        });
+    }
+
+    render() {
+        return (
+            <AppBlock>
+                <AppHeader/>
+                <SearchFilterBlock>
+                    <SearchPanel/>
+                    <PostStatusFilter/>
+                </SearchFilterBlock>
+                <PostList 
+                    posts={this.state.data}
+                    onDelete={this.deleteItem}/>
+                <PostAddForm
+                    onAdd={this.addItem}/>
+            </AppBlock>
+        )
+    }
+    
+
+    
 }
-
-export default App;
